@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main", "develop"]
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-test:
+    name: Lint y Tests Unitarios (Python 3.12)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Instalar dependencias de desarrollo
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Comprobar linter y formato (Ruff)
+        run: |
+          ruff check .
+          ruff format --check .
+
+      - name: Ejecutar tests unitarios con cobertura
+        run: pytest -m "not integration" --cov --cov-report=term-missing
+
+  terraform-validate:
+    name: Validacion Terraform (fmt y validate)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.8"
+
+      - name: Comprobar formato HCL
+        run: terraform fmt -check -recursive infra
+
+      - name: Inicializar y validar infra/dev
+        run: |
+          terraform -chdir=infra/dev init -backend=false
+          terraform -chdir=infra/dev validate

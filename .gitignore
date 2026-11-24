@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# Herramientas
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Secretos y entorno local (NUNCA versionar)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan
+crash.log
+*.tfvars
+!*.tfvars.example
+
+# LocalStack
+.localstack/
+localstack-data/
+volume/
+
+# Datos locales (data lake / data marts)
+*.parquet
+*.duckdb
+*.duckdb.wal
+data/
+
+# IDE / SO
+.idea/
+.vscode/
+.DS_Store
